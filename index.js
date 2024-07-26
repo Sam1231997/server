@@ -1,11 +1,21 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const cors = require('cors');  // Add this line
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(cors());  // Enable CORS
 
 app.get('/api/data', (req, res) => {
-  res.json({ message: 'This is a mock response' });
+  fs.readFile(path.join(__dirname, 'data.json'), 'utf8', (err, data) => {
+    if (err) {
+      res.status(500).send('Error reading data');
+      return;
+    }
+    res.setHeader('Content-Type', 'application/json');
+    res.send(data);
+  });
 });
 
 app.listen(port, () => {
